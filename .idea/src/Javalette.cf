@@ -1,0 +1,172 @@
+-- programs ------------------------------------------------
+
+entrypoints Prog ;
+
+Program.   Prog ::= [TopDef] ;
+
+FnDef.	   TopDef ::= Type Ident "(" [Arg] ")" Blk ;
+
+separator nonempty TopDef "" ;
+
+Argument.  Arg ::= Type Ident;
+
+separator  Arg "," ;
+
+StructDef. TopDef ::= "struct" Ident "{" [Member] "}" ";" ;
+
+StructMember.   Member ::= Type Ident ";" ;
+
+separator  Member "" ;
+
+PtrTypeDef. TopDef ::= "typedef" "struct" Ident "*" Ident ";" ;
+
+-- statements ----------------------------------------------
+
+Block.     Blk ::= "{" [Stmt] "}" ;
+
+separator  Stmt "" ;
+
+Empty.     Stmt ::= ";" ;
+
+BStmt.     Stmt ::= Blk ;
+
+Decl.      Stmt ::= Type [Item] ";" ;
+
+NoInit.    Item ::= Ident ;
+
+Init.      Item ::= Ident "=" Expr ;
+
+separator nonempty Item "," ;
+
+Ass.       Stmt ::= Ident "=" Expr  ";" ;
+
+Incr.      Stmt ::= Ident "++"  ";" ;
+
+Decr.      Stmt ::= Ident "--"  ";" ;
+
+Ret.       Stmt ::= "return" Expr ";" ;
+
+VRet.      Stmt ::= "return" ";" ;
+
+Cond.      Stmt ::= "if" "(" Expr ")" Stmt  ;
+
+CondElse.  Stmt ::= "if" "(" Expr ")" Stmt "else" Stmt  ;
+
+While.     Stmt ::= "while" "(" Expr ")" Stmt ;
+
+SExp.      Stmt ::= Expr  ";" ;
+
+ArrayAss.  Stmt ::= Expr8 [Bre] "=" Expr ";" ;
+
+ForEach.   Stmt ::= "for" "(" Type Ident ":" Expr ")" Stmt ;
+
+StructAss. Stmt ::= Expr7 "->" Ident "=" Expr ";" ;
+
+-- Types ---------------------------------------------------
+
+Int.       TypeBase ::= "int" ;
+
+Doub.      TypeBase ::= "double" ;
+
+Bool.      TypeBase ::= "boolean" ;
+
+Void.      TypeBase ::= "void" ;
+
+Ptr.       TypeBase ::= Ident ;
+
+Base.      Type ::= TypeBase ;
+
+Array.     Type ::= TypeBase [Br] ;
+
+internal   Fun. Type ::= Type "(" [Type] ")" ;
+
+separator  Type "," ;
+
+
+-- Expressions ---------------------------------------------
+
+EVar.      Expr8 ::= Ident ;
+
+ELitInt.   Expr8 ::= Integer ;
+
+ELitDoub.  Expr8 ::= Double;
+
+ELitTrue.  Expr8 ::= "true" ;
+
+ELitFalse. Expr8 ::= "false" ;
+
+EApp.      Expr8 ::= Ident "(" [Expr] ")" ;
+
+EString.   Expr8 ::= String ;
+
+EReference. Expr8 ::= Expr7 "->" Ident ;
+
+EAttribute.    Expr8 ::= Expr6 "." Ident ;
+
+EArray.     Expr7 ::= Expr8 [Bre] ;
+
+EArrayInit. Expr6 ::= "new " TypeBase [Bre] ;
+
+ENullPointer. Expr6 ::= "(" Ident ")" "null" ;
+
+EStructInit. Expr6 ::= "new " Ident ;
+
+Neg.       Expr5 ::= "-" Expr7 ;
+
+Not.       Expr5 ::= "!" Expr7 ;
+
+EMul.      Expr4 ::= Expr4 MulOp Expr5 ;
+
+EAdd.      Expr3 ::= Expr3 AddOp Expr4 ;
+
+ERel.      Expr2 ::= Expr2 RelOp Expr3 ;
+
+EAnd.      Expr1 ::= Expr2 "&&" Expr1 ;
+
+EOr.       Expr ::= Expr1 "||" Expr ;
+
+coercions  Expr 8 ;
+
+separator  Expr "," ;
+
+
+-- operators -----------------------------------------------
+
+Plus.      AddOp ::= "+" ;
+
+Minus.     AddOp ::= "-" ;
+
+Times.     MulOp ::= "*" ;
+
+Div.       MulOp ::= "/" ;
+
+Mod.       MulOp ::= "%" ;
+
+LTH.       RelOp ::= "<" ;
+
+LE.        RelOp ::= "<=" ;
+
+GTH.       RelOp ::= ">" ;
+
+GE.        RelOp ::= ">=" ;
+
+EQU.       RelOp ::= "==" ;
+
+NE.        RelOp ::= "!=" ;
+
+-- comments ------------------------------------------------
+
+comment    "#" ;
+
+comment    "//" ;
+
+comment    "/*" "*/" ;
+
+
+-- other ---------------------------------------------------
+
+BrR.        Br ::= "[]" ;
+separator nonempty Br "" ;
+BreR.		Bre ::= "[" Expr "]" ;
+separator nonempty Bre "" ;
+

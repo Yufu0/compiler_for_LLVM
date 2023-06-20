@@ -1,0 +1,17 @@
+#!/bin/bash
+
+set -e
+
+BASEDIR=$(dirname $0)
+java -cp $(dirname $0)/src:$CLASSPATH javalette.Compiler $1
+opt -O3 program.ll > program.bc
+llvm-as $BASEDIR/lib/runtime.ll -o $BASEDIR/lib/runtime.bc
+llvm-link program.bc $BASEDIR/lib/runtime.bc -o a.out.bc
+llc --filetype=obj a.out.bc
+gcc -no-pie a.out.o
+cat program.ll
+
+# Clean up
+if [ "$2" != '--no-cleanup' ]; then
+   rm program.ll program.bc a.out a.out.bc a.out.o
+fi
